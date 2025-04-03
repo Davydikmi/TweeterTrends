@@ -6,31 +6,27 @@ class Program
 {
     static void Main(string[] args)
     {
+        // Импортирование твитов в список
         List<List<TweetData>> allTweets = new List<List<TweetData>>();
         InitFile(allTweets, @"..\..\..\InputData");
 
-        // Тестовый вариант
-        //InitFile(allTweets, @"..\..\..\Test");
-
+        // Подсчет настроения для каждого твита
         SentimentProcessor processor = new SentimentProcessor(@"..\..\..\InputData\sentiments.csv");
         processor.ProcessTweets(allTweets);
 
+        // Определение кода штата для каждого твита
         StateProcessor stateProcessor = new StateProcessor(@"..\..\..\InputData\states.json");
         stateProcessor.AssignStateCodes(allTweets);
 
+        // Сереализация твитов в json файл для просмотра содержимого
         TweetData.SerializeTweet(allTweets, @"..\..\..\InputData", @"..\..\..\OutputData\json");
 
+        // Подсчет среднего настроения для каждого штата
         List<Dictionary<string, double>> AvrStateSentiments = processor.AvrSentimentCount(allTweets, @"..\..\..\InputData");
         PrintAvrSentiments(AvrStateSentiments, @"..\..\..\InputData");
 
+        // Отрисовка карты и ее сохранение
         MapService.DrawMap(AvrStateSentiments, @"..\..\..\InputData\states.json", @"..\..\..\OutputData\image");
-
-        // Тестовый вариант
-        //TweetData.SerializeTweet(allTweets, @"..\..\..\Test", @"..\..\..\Test");
-        //List<Dictionary<string, double>> AvrStateSentiments = processor.AvrSentimentCount(allTweets, @"..\..\..\Test");
-        //PrintAvrSentiments(AvrStateSentiments, @"..\..\..\Test");
-
-        //MapService.DrawMap(AvrStateSentiments, @"..\..\..\InputData\states.json", @"..\..\..\Test");
     }
 
 
