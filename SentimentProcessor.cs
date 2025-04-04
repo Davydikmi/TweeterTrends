@@ -39,9 +39,9 @@ public class SentimentProcessor
     // Подсчет оценки настроения для каждого твита
     public void ProcessTweets(List<List<TweetData>> allTweets)
     {
-        foreach (var tweetList in allTweets)
+        foreach (List<TweetData> tweetList in allTweets)
         {
-            foreach (var tweet in tweetList)
+            foreach (TweetData tweet in tweetList)
             {
                 List<string> words = ExtractWords(tweet.TweetText);
                 double sentimentScore = 0.0;
@@ -106,8 +106,8 @@ public class SentimentProcessor
 
         for (int i = 0; i < txtFiles.Length; i++)
         {
-            var sentimentDict = new Dictionary<string, double>();
-            var countDict = new Dictionary<string, int>();
+            Dictionary<string, double> sentimentDict = new Dictionary<string, double>();
+            Dictionary<string, int> countDict = new Dictionary<string, int>();
 
             // Заполняем словари кодами штатов 
             StateProcessor.FillDictionaryWithKeys(sentimentDict, 0.0);
@@ -120,7 +120,7 @@ public class SentimentProcessor
         // Подсчет суммы оценок и количества твитов по каждому штату
         for (int i = 0; i < allTweets.Count; i++)
         {
-            foreach (var tweet in allTweets[i])
+            foreach (TweetData tweet in allTweets[i])
             {
                 if (tweet.StateCode != "XX") 
                 {
@@ -130,7 +130,7 @@ public class SentimentProcessor
             }
 
             // Подсчет среднего значения настроения
-            foreach (var state in AvrStateSentiment[i].Keys.ToList())
+            foreach (string state in AvrStateSentiment[i].Keys.ToList())
             {
                 if (StateTweetCount[i][state] > 0)
                 {

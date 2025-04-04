@@ -16,28 +16,8 @@ namespace TwitterTrends.Services
         private static readonly int MapHeight = 1080; 
 
         // Отрисовка карты
-        public static void DrawMap(List<Dictionary<string, double>> AvrStateSentiments, string statesFilePath, string outputPath)
+        public static void DrawMap(List<Dictionary<string, double>> AvrStateSentiments, Dictionary<string, List<Polygon>> statePolygons, string outputPath)
         {
-            if (!File.Exists(statesFilePath))
-            {
-                Console.WriteLine("Файл с границами штатов не найден: " + statesFilePath);
-                return;
-            }
-
-            string json = File.ReadAllText(statesFilePath);
-            JObject stateData = JObject.Parse(json);
-            var gf = NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326);
-
-            // Парсинг координат границ штатов
-            Dictionary<string, List<Geometry>> statePolygons = new Dictionary<string, List<Geometry>>();
-            foreach (var state in stateData)
-            {
-                string stateCode = state.Key;
-                JToken coordinates = state.Value;
-                List<Polygon> polygons = StateProcessor.ProcessPart(coordinates, gf);
-                statePolygons[stateCode] = polygons.Cast<Geometry>().ToList();
-            }
-
             string[] txtFiles = Directory.GetFiles(@"..\..\..\InputData", "*.txt");
 
             // Отрисовка карты для каждого файла
@@ -50,7 +30,7 @@ namespace TwitterTrends.Services
         }
 
         // Отрисовка карты для каждого файла
-        private static void DrawSingleMap(Dictionary<string, double> stateSentiments, Dictionary<string, List<Geometry>> statePolygons, string outputFilePath)
+        private static void DrawSingleMap(Dictionary<string, double> stateSentiments, Dictionary<string, List<Polygon>> statePolygons, string outputFilePath)
         {
             using (Bitmap bitmap = new Bitmap(MapWidth, MapHeight))
             using (Graphics graphics = Graphics.FromImage(bitmap))
@@ -88,7 +68,7 @@ namespace TwitterTrends.Services
         // Расчет цвета для каждого штата на основе среднего настроения
         public static Dictionary<string, string> CalculateStateColors(Dictionary<string, double> stateSentiments)
         {
-            var stateColors = new Dictionary<string, string>();
+            Dictionary<string,string> stateColors = new Dictionary<string, string>();
             double minSentiment = stateSentiments.Values.Min();
             double maxSentiment = stateSentiments.Values.Max();
 

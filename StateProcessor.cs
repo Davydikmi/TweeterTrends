@@ -7,7 +7,7 @@ using Lab1;
 
 public class StateProcessor
 {
-    private Dictionary<string, List<Polygon>> stateBoundaries; // Границы штатов
+    public Dictionary<string, List<Polygon>> stateBoundaries; // Границы штатов
     private GeometryFactory geometryFactory; // Фабрика геометрических объектов
 
     public static readonly string[] StateCodes =
@@ -40,8 +40,8 @@ public class StateProcessor
     // Парсинг JSON файла с границами штатов
     private Dictionary<string, List<Polygon>> ParseJson(string jsonContent)
     {
-        var result = new Dictionary<string, List<Polygon>>();
-        var json = JObject.Parse(jsonContent);
+        Dictionary<string, List<Polygon>> result = new Dictionary<string, List<Polygon>>();
+        JObject json = JObject.Parse(jsonContent);
 
         foreach (var state in json)
         {
@@ -114,7 +114,7 @@ public class StateProcessor
     // Проверка, что все элементы массива — пары координат
     public static bool AllCoordinatePairs(JArray arr)
     {
-        foreach (var item in arr)
+        foreach (JToken item in arr)
         {
             if (!IsCoordinatePair(item)) return false;
         }
@@ -133,7 +133,7 @@ public class StateProcessor
     public static Coordinate[] ConvertToCoordinates(JArray arr)
     {
         List<Coordinate> coords = new List<Coordinate>();
-        foreach (var item in arr)
+        foreach (JToken item in arr)
         {
             if (IsCoordinatePair(item))
             {
@@ -148,9 +148,9 @@ public class StateProcessor
     // Присваивание кода штата каждому твиту на основе координат
     public void AssignStateCodes(List<List<TweetData>> allTweets)
     {
-        foreach (var tweetList in allTweets)
+        foreach (List<TweetData> tweetList in allTweets)
         {
-            foreach (var tweet in tweetList)
+            foreach (TweetData tweet in tweetList)
             {
                 tweet.StateCode = GetStateCode(tweet.Coordinates[1], tweet.Coordinates[0]);
             }
@@ -164,7 +164,7 @@ public class StateProcessor
 
         foreach (var state in stateBoundaries)
         {
-            foreach (var polygon in state.Value)
+            foreach (Polygon polygon in state.Value)
             {
                 if (polygon.Contains(point))
                 {

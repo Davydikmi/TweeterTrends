@@ -26,7 +26,7 @@ class Program
         PrintAvrSentiments(AvrStateSentiments, @"..\..\..\InputData");
 
         // Отрисовка карты и ее сохранение
-        MapService.DrawMap(AvrStateSentiments, @"..\..\..\InputData\states.json", @"..\..\..\OutputData\image");
+        MapService.DrawMap(AvrStateSentiments,stateProcessor.stateBoundaries, @"..\..\..\OutputData\image");
     }
 
 
